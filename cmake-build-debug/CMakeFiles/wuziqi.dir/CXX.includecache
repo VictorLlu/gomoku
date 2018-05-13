@@ -1,0 +1,50 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+F:/Clion project/wuziqi/basic.cpp
+basic.h
+F:/Clion project/wuziqi/basic.h
+
+F:/Clion project/wuziqi/basic.h
+iostream
+-
+vector
+-
+
+F:/Clion project/wuziqi/main.cpp
+iostream
+-
+vector
+-
+wuziqi_ai.h
+F:/Clion project/wuziqi/wuziqi_ai.h
+basic.h
+F:/Clion project/wuziqi/basic.h
+
+F:/Clion project/wuziqi/wuziqi_ai.cpp
+wuziqi_ai.h
+F:/Clion project/wuziqi/wuziqi_ai.h
+basic.h
+F:/Clion project/wuziqi/basic.h
+iostream
+-
+vector
+-
+climits
+-
+
+F:/Clion project/wuziqi/wuziqi_ai.h
+iostream
+-
+vector
+-
+basic.h
+F:/Clion project/wuziqi/basic.h
+climits
+-
+
