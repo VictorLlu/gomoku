@@ -112,7 +112,7 @@ int get_total_score(int pos[15][15], int turn){
 bool has_near_point(int pos[15][15],int x, int y){
     int i,j;
     for(i=(x-1>0 ? x-1:0);i<=x+1&&i<15;i++){
-        for(j=(y-1>0 ? y-1:0);j<y+1&&j<15;j++){
+        for(j=(y-1>0 ? y-1:0);j<=y+1&&j<15;j++){
             if(i!=0||j!=0){
                 if(pos[i][j]!=0) return true;
             }
@@ -221,9 +221,245 @@ result *find_ai_max(int pos[15][15],int depth,int alpha,int beta){
     return bestai;
 }
 
+bool singlefive(vector<int>n,int turn){
+    int number = 0;
+    int i = 0;
+    int length = n.size();
+    while (i < length) {
+        if (n[i] == turn) {
+            number++;
+            if (number >= 5) return true;
+        } else number = 0;
+        i++;
+    }
+    return false;
+}
+
+bool singlefour(vector<int>n,int turn){
+    int length=n.size();
+    int i=1;
+    int number=0;
+    int empty=0;
+    if(n[0]==0) empty=1;
+    else if(n[0]==turn) number++;
+    while(i<length){
+        if(n[i]==turn) number++;
+        else if(n[i]==0){
+            if(number==0) empty=1;
+            else{
+                if(number==4){
+                    return true;
+                }
+                number=0;
+            }
+        }
+        else{
+            number=0;
+        }
+        i++;
+    }
+    return false;
+}
+
+bool_result *is_bisheng(int pos[15][15],int turn){
+    const vector<pair<int,int>> av_p=available_point(pos);
+    const int length=av_p.size();
+    bool_result *result=new bool_result;
+    int k;
+    for(k=0;k<length;k++){
+        pos[av_p[k].first][av_p[k].second]=turn;
+        //print_canvas(pos);
+        int i,j;
+        //横排
+        for(i=0;i<15;i++){
+            vector<int> n;
+            for(j=0;j<15;j++) n.push_back(pos[i][j]);
+            if(singlefive(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //竖排
+        for(j=0;j<15;j++){
+            vector<int> n;
+            for(i=0;i<15;i++) n.push_back(pos[i][j]);
+            if(singlefive(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //上半正斜
+        for(i=0;i<15;i++){
+            vector<int> n;
+            int x,y;
+            for(x=i,y=0;x<15 && y<15;x++,y++) n.push_back(pos[x][y]);
+            if(singlefive(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //下半正斜
+        for(j=1;j<15;j++){
+            vector<int> n;
+            int x,y;
+            for(x=0,y=j;x<15 && y<15;x++,y++) n.push_back(pos[x][y]);
+            if(singlefive(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //上半反斜
+        for(i=0;i<15;i++){
+            vector<int> n;
+            int x,y;
+            for(x=i,y=0;x>=0 && y<15;x--,y++) n.push_back(pos[x][y]);
+            if(singlefive(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //下半反斜
+        for(j=1;j<15;j++){
+            vector<int> n;
+            int x,y;
+            for(x=14,y=j;x>=0 && y<15;x--,y++) n.push_back(pos[x][y]);
+            if(singlefive(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        pos[av_p[k].first][av_p[k].second]=0;
+    }
+
+    //again
+
+    for(k=0;k<length;k++){
+        pos[av_p[k].first][av_p[k].second]=turn;
+        //print_canvas(pos);
+        int i,j;
+        //横排
+        for(i=0;i<15;i++){
+            vector<int> n;
+            for(j=0;j<15;j++) n.push_back(pos[i][j]);
+            if(singlefour(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //竖排
+        for(j=0;j<15;j++){
+            vector<int> n;
+            for(i=0;i<15;i++) n.push_back(pos[i][j]);
+            if(singlefour(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //上半正斜
+        for(i=0;i<15;i++){
+            vector<int> n;
+            int x,y;
+            for(x=i,y=0;x<15 && y<15;x++,y++) n.push_back(pos[x][y]);
+            if(singlefour(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //下半正斜
+        for(j=1;j<15;j++){
+            vector<int> n;
+            int x,y;
+            for(x=0,y=j;x<15 && y<15;x++,y++) n.push_back(pos[x][y]);
+            if(singlefour(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //上半反斜
+        for(i=0;i<15;i++){
+            vector<int> n;
+            int x,y;
+            for(x=i,y=0;x>=0 && y<15;x--,y++) n.push_back(pos[x][y]);
+            if(singlefour(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        //下半反斜
+        for(j=1;j<15;j++){
+            vector<int> n;
+            int x,y;
+            for(x=14,y=j;x>=0 && y<15;x--,y++) n.push_back(pos[x][y]);
+            if(singlefour(n,turn)) {
+                result->torf=true;
+                result->point.first=av_p[k].first;
+                result->point.second=av_p[k].second;
+                return result;
+            }
+            n.clear();
+        }
+        pos[av_p[k].first][av_p[k].second]=0;
+    }
+    result->torf=false;
+    return result;
+}
+
 pair<int,int> ai_make_move(int pos[15][15]){
-    pair<int,int> ai_best_point(find_ai_max(pos,4,INT_MIN,INT_MAX)->point);
-    //ai_best_point.first=find_ai_max(pos,2)->point.first;
-    //ai_best_point.second=find_ai_max(pos,2)->point.second;
+    bool_result *ai_result=is_bisheng(pos,2);
+    bool_result *player_result=is_bisheng(pos,1);
+    pair<int,int> ai_best_point;
+    if(ai_result->torf){
+        pair<int,int> p(ai_result->point);
+        ai_best_point.first=p.first;
+        ai_best_point.second=p.second;
+    }
+    else if(player_result->torf){
+        pair<int,int> p(player_result->point);
+        ai_best_point.first=p.first;
+        ai_best_point.second=p.second;
+    }
+    else{
+        pair<int,int> p(find_ai_max(pos,3,INT_MIN,INT_MAX)->point);
+        ai_best_point.first=p.first;
+        ai_best_point.second=p.second;
+    }
     return ai_best_point;
+}
+
+pair<int,int> ai_init(){
+    pair<int,int> p(7,7);
+    return p;
 };
